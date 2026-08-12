@@ -13,12 +13,12 @@
 // ============================================================
 
 const firebaseConfig = {
-  apiKey: "DÁN_API_KEY_CỦA_BẠN",
-  authDomain: "ten-du-an.firebaseapp.com",
-  projectId: "ten-du-an",
-  storageBucket: "ten-du-an.appspot.com",
-  messagingSenderId: "000000000000",
-  appId: "1:000000000000:web:xxxxxxxxxxxxxxxx",
+  apiKey: "AIzaSyA6d_o0_POZpxyzWRC5Qy49SWxNRE38Q-M",
+  authDomain: "petcarecenter-34a0f.firebaseapp.com",
+  projectId: "petcarecenter-34a0f",
+  storageBucket: "petcarecenter-34a0f.firebasestorage.app",
+  messagingSenderId: "540755624756",
+  appId: "1:540755624756:web:3723dea3e153bb23ae9b61",
 };
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
