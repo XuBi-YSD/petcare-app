@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sổ Tay Thú Cưng — Trung tâm chăm sóc thú cưng</title>
+<meta name="description" content="Đặt lịch tắm gội, khám sức khoẻ và lưu trú cho thú cưng — quản lý hồ sơ trực tuyến." />
+<meta name="theme-color" content="#2F4F41" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<header id="site-header" class="site-header"></header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <span class="hero-tag">Trung tâm chăm sóc thú cưng</span>
+      <h1>Hồ sơ sức khoẻ &amp; lịch hẹn cho thú cưng, gọn trong một quyển sổ số.</h1>
+      <p class="lede">Đặt lịch tắm gội, khám sức khoẻ, lưu trú — theo dõi mọi lần hẹn và hồ sơ của từng bé thú cưng ở một nơi duy nhất.</p>
+      <div class="hero-actions">
+        <a href="booking.html" class="btn btn-primary">Đặt lịch ngay</a>
+        <a href="#auth" class="btn btn-outline">Đăng nhập / Đăng ký</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" style="margin-top:48px">
+    <span class="eyebrow">Dịch vụ</span>
+    <h2>Chúng tôi chăm sóc những gì</h2>
+    <div class="grid grid-3">
+      <div class="card">
+        <h3>Tắm gội &amp; Spa</h3>
+        <p>Vệ sinh, cắt tỉa lông, spa thư giãn cho chó mèo mọi kích cỡ.</p>
+      </div>
+      <div class="card">
+        <h3>Khám sức khoẻ</h3>
+        <p>Kiểm tra định kỳ, tư vấn dinh dưỡng, tiêm phòng theo lịch.</p>
+      </div>
+      <div class="card">
+        <h3>Lưu trú ngắn ngày</h3>
+        <p>Trông giữ thú cưng khi bạn đi công tác hoặc du lịch.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="auth" style="margin-top:56px; max-width:480px;">
+    <span class="eyebrow">Tài khoản</span>
+    <h2>Đăng nhập hoặc tạo hồ sơ khách hàng</h2>
+
+    <div class="card">
+      <div class="row-between" style="margin-bottom:12px;">
+        <button id="tabLogin" class="btn btn-ghost btn-sm">Đăng nhập</button>
+        <button id="tabRegister" class="btn btn-ghost btn-sm">Đăng ký</button>
+      </div>
+
+      <form id="loginForm">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" required />
+        <label for="loginPassword">Mật khẩu</label>
+        <input id="loginPassword" type="password" required minlength="6" />
+        <button class="btn btn-primary" style="margin-top:16px; width:100%;" type="submit">Đăng nhập</button>
+        <div id="loginMsg" class="form-msg"></div>
+      </form>
+
+      <form id="registerForm" class="hidden">
+        <label for="regName">Họ tên</label>
+        <input id="regName" required />
+        <label for="regPhone">Số điện thoại</label>
+        <input id="regPhone" required />
+        <label for="regEmail">Email</label>
+        <input id="regEmail" type="email" required />
+        <label for="regPassword">Mật khẩu (tối thiểu 6 ký tự)</label>
+        <input id="regPassword" type="password" required minlength="6" />
+        <button class="btn btn-primary" style="margin-top:16px; width:100%;" type="submit">Tạo tài khoản</button>
+        <div id="registerMsg" class="form-msg"></div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module" src="assets/js/auth.js"></script>
+<script type="module">
+  import { registerCustomer, loginCustomer } from "./assets/js/auth.js";
+
+  const tabLogin = document.getElementById("tabLogin");
+  const tabRegister = document.getElementById("tabRegister");
+  const loginForm = document.getElementById("loginForm");
+  const registerForm = document.getElementById("registerForm");
+
+  tabLogin.addEventListener("click", () => { loginForm.classList.remove("hidden"); registerForm.classList.add("hidden"); });
+  tabRegister.addEventListener("click", () => { registerForm.classList.remove("hidden"); loginForm.classList.add("hidden"); });
+
+  loginForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("loginMsg");
+    try {
+      await loginCustomer({
+        email: document.getElementById("loginEmail").value,
+        password: document.getElementById("loginPassword").value,
+      });
+      msg.textContent = "Đăng nhập thành công.";
+      msg.className = "form-msg show success";
+    } catch (err) {
+      msg.textContent = "Sai email hoặc mật khẩu.";
+      msg.className = "form-msg show error";
+    }
+  });
+
+  registerForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById("registerMsg");
+    try {
+      await registerCustomer({
+        email: document.getElementById("regEmail").value,
+        password: document.getElementById("regPassword").value,
+        name: document.getElementById("regName").value,
+        phone: document.getElementById("regPhone").value,
+      });
+      msg.textContent = "Tạo tài khoản thành công!";
+      msg.className = "form-msg show success";
+    } catch (err) {
+      msg.textContent = "Có lỗi: " + err.message;
+      msg.className = "form-msg show error";
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+// ============================================================
+// firestore.rules — hàng rào bảo mật thật sự của ứng dụng.
+//
+// Cách áp dụng: Firebase Console → Firestore Database → tab "Rules"
+// → xoá nội dung mặc định → dán toàn bộ file này vào → Publish.
+//
+// Nguyên tắc: mặc định CHẶN tất cả, chỉ mở quyền cho từng trường hợp
+// cụ thể bên dưới. Vai trò (role) đọc từ chính document users/{uid}.
+// ============================================================
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function role() {
+      return isSignedIn()
+        ? get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+        : null;
+    }
+
+    function isStaff() {
+      return role() == 'staff' || role() == 'admin';
+    }
+
+    function isAdmin() {
+      return role() == 'admin';
+    }
+
+    // ---------- Hồ sơ khách hàng ----------
+    match /users/{uid} {
+      allow read: if isOwner(uid) || isStaff();
+
+      // Khi đăng ký: chỉ được tự tạo hồ sơ CHÍNH MÌNH, và bắt buộc
+      // role = "customer" — không ai tự phong mình làm admin qua app.
+      allow create: if isOwner(uid) && request.resource.data.role == 'customer';
+
+      // Khách hàng tự sửa thông tin của mình nhưng KHÔNG được đổi role.
+      allow update: if isOwner(uid) && request.resource.data.role == resource.data.role;
+
+      // Chỉ admin mới được đổi role (cấp quyền staff/admin) hoặc xoá tài khoản.
+      allow update, delete: if isAdmin();
+
+      // ---------- Hồ sơ thú cưng (nằm trong hồ sơ khách hàng) ----------
+      match /pets/{petId} {
+        allow read, write: if isOwner(uid) || isStaff();
+      }
+    }
+
+    // ---------- Lịch hẹn ----------
+    match /appointments/{apptId} {
+      // Khách hàng chỉ tạo được lịch hẹn của chính mình, trạng thái ban đầu
+      // bắt buộc là "pending" (không tự đặt lịch với trạng thái đã xác nhận).
+      allow create: if isSignedIn()
+                    && request.resource.data.uid == request.auth.uid
+                    && request.resource.data.status == 'pending';
+
+      // Đọc: chủ lịch hẹn hoặc nhân viên/quản trị.
+      allow read: if isSignedIn() && (resource.data.uid == request.auth.uid || isStaff());
+
+      // Khách hàng: chỉ được tự HUỶ lịch hẹn của mình.
+      allow update: if isSignedIn()
+                    && resource.data.uid == request.auth.uid
+                    && request.resource.data.status == 'cancelled';
+
+      // Nhân viên/quản trị: toàn quyền cập nhật trạng thái lịch hẹn.
+      allow update: if isStaff();
+
+      allow delete: if isAdmin();
+    }
+  }
+}

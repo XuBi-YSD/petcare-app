@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Đặt lịch hẹn — Sổ Tay Thú Cưng</title>
+<meta name="theme-color" content="#2F4F41" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="assets/css/style.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+<header id="site-header" class="site-header"></header>
+
+<main class="wrap" style="max-width:720px;">
+  <span class="eyebrow">Đặt lịch</span>
+  <h1 style="font-size:1.9rem;">Đặt lịch hẹn cho thú cưng</h1>
+
+  <p id="loginNotice" class="help-text">Vui lòng <a href="index.html#auth">đăng nhập</a> để đặt lịch hẹn.</p>
+
+  <div id="bookingGate" class="hidden">
+    <div class="card">
+      <form id="bookingForm">
+        <label for="petSelect">Chọn thú cưng</label>
+        <select id="petSelect"></select>
+        <div class="field hidden">
+          <label for="petNameFallback">Tên thú cưng (nếu chưa có hồ sơ)</label>
+          <input id="petNameFallback" />
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="service">Dịch vụ</label>
+            <select id="service" required>
+              <option value="Tắm gội & Spa">Tắm gội &amp; Spa</option>
+              <option value="Khám sức khoẻ">Khám sức khoẻ</option>
+              <option value="Lưu trú ngắn ngày">Lưu trú ngắn ngày</option>
+              <option value="Tiêm phòng">Tiêm phòng</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div>
+            <label for="date">Ngày hẹn</label>
+            <input id="date" type="date" required />
+          </div>
+          <div>
+            <label for="time">Giờ hẹn</label>
+            <input id="time" type="time" required />
+          </div>
+        </div>
+
+        <label for="note">Ghi chú (tuỳ chọn)</label>
+        <textarea id="note" placeholder="Ví dụ: bé hơi nhát người lạ, cần khám kỹ tai..."></textarea>
+
+        <button class="btn btn-primary" style="margin-top:18px;" type="submit">Xác nhận đặt lịch</button>
+        <div id="bookingMsg" class="form-msg"></div>
+      </form>
+    </div>
+
+    <h2 style="margin-top:40px;">Lịch hẹn của bạn</h2>
+    <div id="myAppointments" class="card"></div>
+  </div>
+</main>
+
+<footer id="site-footer" class="site-footer"></footer>
+
+<script type="module" src="assets/js/layout.js"></script>
+<script type="module">
+  import "./assets/js/auth.js";
+  document.addEventListener("authready", (e) => {
+    document.getElementById("loginNotice").classList.toggle("hidden", !!e.detail.user);
+  });
+</script>
+<script type="module" src="assets/js/booking.js"></script>
+</body>
+</html>
